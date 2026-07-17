@@ -6,6 +6,7 @@
   "packageManager": "pnpm@11.9.0",
   "scripts": {
     "build": "react-router build",
+    "csp:verify": "node scripts/verify-csp-hashes.mjs",
     "dev": "react-router dev",
     "preview": "vite preview --outDir build/client",
     "typecheck": "react-router typegen && tsc"

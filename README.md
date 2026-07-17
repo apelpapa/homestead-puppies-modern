@@ -34,3 +34,23 @@ pnpm audit --prod
 
 The production build is written to `build/client`. Nginx should serve that
 directory and proxy `/api/` to the existing Express process.
+
+## Production layout
+
+- Static releases: `/var/www/homesteadpuppies.org/releases/<commit>`
+- Active release: `/var/www/homesteadpuppies.org/current`
+- Nginx config: `ops/nginx/homesteadpuppies.org.conf`
+- TLS renewal hook: `ops/renewal-hooks/reload-nginx`
+- API upstream: `http://127.0.0.1:3000/api/v1`
+
+The Nginx content security policy authorizes only the exact inline bootstrap
+scripts emitted by the production build. Run this after every build and before
+deploying:
+
+```bash
+pnpm csp:verify
+```
+
+If it fails, rebuild and update the hash list in the versioned Nginx config
+before reloading Nginx. This keeps React hydration working without enabling a
+blanket `unsafe-inline` script policy.
