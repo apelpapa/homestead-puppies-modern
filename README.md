@@ -1,43 +1,36 @@
-# Homestead Puppies Modern
+# Homestead Puppies — Modern Frontend
 
-Modern portfolio frontend for Homestead Puppies. This project deliberately
-shares the existing Express/PostgreSQL backend with the legacy EJS website
-while presenting the same domain through a current React architecture.
+A responsive React frontend for the Homestead Puppies portfolio project. It
+coexists with the original EJS website and reads the same live catalog through
+a versioned, read-only Express API.
 
 ## Stack
 
-- React 19
-- React Router 8 Framework Mode
-- TypeScript with strict checking
-- Vite
-- Tailwind CSS
-- pnpm
+- React 19 and React Router 8
+- TypeScript in strict mode
+- Vite 8 and Tailwind CSS 4
+- Static output served by Nginx
+- Existing Express/PostgreSQL backend at `/api/v1`
+- Existing S3/CloudFront photo pipeline
+- Existing PayPal hosted deposit button
 
-## Development
+## Local development
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-The development server runs at `http://localhost:5173`.
-
-Copy `.env.example` to `.env` only when you need to override the API base URL.
-Variables prefixed with `VITE_` are visible in the browser and must never
-contain secrets.
+Vite proxies `/api` to the legacy production origin by default. Copy
+`.env.example` to `.env` only when you need a different public API target.
 
 ## Checks
 
 ```bash
 pnpm typecheck
 pnpm build
+pnpm audit --prod
 ```
 
-## Deployment model
-
-The app uses React Router SPA mode with the home page pre-rendered. Production
-output is written to `build/client` and is intended to be served directly by
-Nginx for `homesteadpuppies.org`.
-
-Requests to `/api/v1/*` will be proxied by Nginx to the existing Express
-application. Express remains the only runtime backend.
+The production build is written to `build/client`. Nginx should serve that
+directory and proxy `/api/` to the existing Express process.

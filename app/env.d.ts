@@ -5,3 +5,13 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+type PayPalHostedButtons = {
+  render: (target: HTMLElement | string) => Promise<void>;
+};
+
+interface Window {
+  paypal?: {
+    HostedButtons: (options: { hostedButtonId: string }) => PayPalHostedButtons;
+  };
+}
