@@ -1,0 +1,29 @@
+{
+  "name": "homestead-puppies-modern",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "build": "react-router build",
+    "dev": "react-router dev",
+    "preview": "vite preview --outDir build/client",
+    "typecheck": "react-router typegen && tsc"
+  },
+  "dependencies": {
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-router": "8.2.0",
+    "isbot": "^5"
+  },
+  "devDependencies": {
+    "@react-router/dev": "8.2.0",
+    "@tailwindcss/vite": "^4.2.2",
+    "@types/node": "^22",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.3"
+  }
+}
