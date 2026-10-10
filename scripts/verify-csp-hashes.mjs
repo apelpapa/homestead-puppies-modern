@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { readdir, readFile } from "node:fs/promises";
+import { readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -38,7 +38,23 @@ for (const path of await htmlFiles(buildRoot)) {
   }
 }
 
-const nginxConfig = await readFile(nginxConfigPath, "utf8");
+let nginxConfig = await readFile(nginxConfigPath, "utf8");
+if (process.argv.includes("--write")) {
+  let policies = 0;
+  nginxConfig = nginxConfig.replace(/script-src\s+([^;]+);/g, (_, policy) => {
+    policies += 1;
+    const sources = policy.replace(/'sha256-[^']+'/g, "").trim().split(/\s+/);
+    if (!sources.includes("'self'")) {
+      throw new Error("CSP script-src must retain 'self'.");
+    }
+    return "script-src " + [...sources, ...[...expected].sort()].join(" ") + ";";
+  });
+  if (policies !== 1 || expected.size === 0) {
+    throw new Error("Expected one script-src policy and a built React frontend.");
+  }
+  await writeFile(nginxConfigPath, nginxConfig, "utf8");
+  console.log(`Updated CSP for ${expected.size} inline script hashes.`);
+}
 const configured = new Set(nginxConfig.match(/'sha256-[^']+'/g) || []);
 const missing = [...expected].filter((hash) => !configured.has(hash));
 const stale = [...configured].filter((hash) => !expected.has(hash));

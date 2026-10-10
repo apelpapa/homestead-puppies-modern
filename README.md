@@ -41,3 +41,25 @@ flowchart LR
 | `ops/nginx/homesteadpuppies.org.conf` | Static hosting, API proxy, and response headers |
 | `ops/renewal-hooks/reload-nginx` | TLS renewal hook |
 | `scripts/verify-csp-hashes.mjs` | Verify generated inline scripts against the configured CSP |
+
+## Automatic deployment
+
+Pushes to `main` build and validate the React frontend in GitHub Actions, then
+publish a static release to the Homestead droplet. The deployment refreshes
+the exact inline-script CSP hashes and rolls back if activation or health
+checks fail. The original EJS site and shared backend deploy separately from
+the [backend repository](https://github.com/apelpapa/HomesteadPuppies).
+
+See [deployment setup and recovery](ops/deploy/README.md) for server installation,
+GitHub secrets, and migration instructions. Production API requests proxy to
+the shared backend on port 3001.
+
+Local validation:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm typecheck
+pnpm build
+pnpm csp:update
+pnpm csp:verify
+```
