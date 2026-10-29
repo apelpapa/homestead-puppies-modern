@@ -15,6 +15,21 @@ sudo install -m 440 ops/deploy/homestead-react.sudoers /etc/sudoers.d/homestead-
 sudo visudo -cf /etc/sudoers.d/homestead-react-deploy
 ```
 
+The frontend uses a Cloudflare Origin CA certificate. Health checks connect
+directly to local Nginx, so install Cloudflare's RSA Origin CA root for those
+checks before deploying:
+
+```sh
+sudo install -d -m 700 /etc/ssl/cloudflare/homesteadpuppies.org
+sudo curl --fail --show-error --output /etc/ssl/cloudflare/homesteadpuppies.org/origin-ca-root.pem \
+  https://developers.cloudflare.com/ssl/static/origin_ca_rsa_root.pem
+sudo chmod 644 /etc/ssl/cloudflare/homesteadpuppies.org/origin-ca-root.pem
+```
+
+Only the direct origin health checks use this CA through `curl --cacert`.
+Certificate-chain and hostname verification remain enabled. The certificate is
+not added to the system trust store; public HTTPS still goes through Cloudflare.
+
 Append a dedicated Ed25519 public key to `/home/deploy/.ssh/authorized_keys` with:
 
 ```text
