@@ -20,6 +20,7 @@ CURRENT = ROOT / "current"
 CONFIG = Path("/etc/nginx/sites-available/homesteadpuppies.org")
 STATE = Path("/var/lib/homestead-react-deploy")
 LOCK = Path("/run/lock/homestead-react-deploy.lock")
+ORIGIN_CA = Path("/etc/ssl/cloudflare/homesteadpuppies.org/origin-ca-root.pem")
 MAX_ARCHIVE = 128 * 1024 * 1024
 MAX_EXPANDED = 256 * 1024 * 1024
 
@@ -113,6 +114,7 @@ def frontend_health():
     for path in ["/", "/puppies/", "/parents/", "/api/v1/puppies"]:
         run(
             "curl", "--silent", "--show-error", "--fail", "--max-time", "10",
+            "--cacert", str(ORIGIN_CA),
             "--resolve", "homesteadpuppies.org:443:127.0.0.1",
             "https://homesteadpuppies.org" + path,
         )
